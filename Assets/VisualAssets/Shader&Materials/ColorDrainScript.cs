@@ -18,23 +18,28 @@ public class ColorDrainScript : MonoBehaviour {
 	[Range(-1,1)]
 	public float brightness = 0;
 
-	[Range(-1,3)]
+	[Range(-1,5)]
 	public float redUVSaturation = 1;
-	[Range(-1,3)]
+	[Range(-1,5)]
 	public float redNonUVSaturation = 1;
-	[Range(-1,3)]
+	[Range(-1,5)]
 	public float greenUVSaturation = 1;
-	[Range(-1,3)]
+	[Range(-1,5)]
 	public float greenNonUVSaturation = 1;
-	[Range(-1,3)]
+	[Range(-1,5)]
 	public float blueUVSaturation = 1;
-	[Range(-1,3)]
+	[Range(-1,5)]
 	public float blueNonUVSaturation = 1;
 
-	[Range(0,2)]
+	[Range(0,1)]
 	public float uvSuperSaturationChecker = 0.7f;
 	[Range(0,1)]
 	public float generalDesaturation = 0.5f;
+
+	[Range(0,1)]
+	public float yellowBoost = 0.2f;
+
+	[SerializeField] Color uvCheckColor = Color.magenta;
 
 	//This gets the correct shader for the camera to use
 	private Material renderMaterial;
@@ -61,6 +66,8 @@ public class ColorDrainScript : MonoBehaviour {
 		renderMaterial.SetFloat ("_BlueUVSaturation", blueUVSaturation);
 		renderMaterial.SetFloat ("_BlueNonUVSaturation", blueNonUVSaturation);
 		renderMaterial.SetFloat ("_SuperSaturationCheck", uvSuperSaturationChecker);
+		renderMaterial.SetVector("_UvColor", uvCheckColor);
+		renderMaterial.SetFloat("_YellowBoost", yellowBoost);
 
 		//Applies the shader material to the screen render image
 		Graphics.Blit (source, destination, renderMaterial);

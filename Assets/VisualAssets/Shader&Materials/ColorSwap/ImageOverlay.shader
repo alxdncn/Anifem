@@ -16,6 +16,7 @@ Shader "Shader Forge/ImageOverlay" {
         _TextureTint("Texture Tint Color", Color) = (1, 1, 1, 1)
         _MainColorThreshold("Main Color Threshold", Range(0,1)) = 0.5
         _SecondaryThreshold("Secondary Threshold", Range(0,1)) = 0.5
+        _TextureSize("Texture Size", Float) = 1
     }
     SubShader {
         Tags {
@@ -449,6 +450,7 @@ Shader "Shader Forge/ImageOverlay" {
             float _MainColorThreshold;
             float _SecondaryThreshold;
             float4 _TextureTint;
+            float _TextureSize;
 			
 			v2f vert (appdata v)
 			{
@@ -465,11 +467,12 @@ Shader "Shader Forge/ImageOverlay" {
 			{
 				// sample the texture
 				fixed4 col = tex2Dproj(_BaseColor, i.grabPos);
-				fixed2 screenPos = i.screenPos.xy / i.screenPos.z;
-                // return fixed4(screenPos.x, screenPos.y, 0, 0);
+				fixed2 screenPos = (i.screenPos.xy * i.screenPos.z) * _TextureSize;
+                // fixed2 screenPos = (i.screenPos.xy) * _TextureSize;
+                return fixed4(i.screenPos.z, 0, 0, 0);
 
 				if(col.g > _MainColorThreshold && col.b < _SecondaryThreshold && col.r < _SecondaryThreshold){
-					fixed4 colTwo = tex2D(_ReplacementTexture, screenPos) * _TextureTint; //will need to replace with screen space UV
+					fixed4 colTwo = tex2D(_ReplacementTexture, screenPos) * _TextureTint;
 					col = lerp(col, colTwo, colTwo.a);
 				}
 				// apply fog

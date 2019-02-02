@@ -3,7 +3,7 @@
 --- !u!129 &1
 PlayerSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 14
+  serializedVersion: 15
   productGUID: 519c96950c2774b3091c685b41afadbf
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
@@ -239,7 +239,7 @@ PlayerSettings:
   tvOSManualSigningProvisioningProfileID: 
   appleEnableAutomaticSigning: 0
   clonedFromGUID: 00000000000000000000000000000000
-  AndroidTargetDevice: 0
+  AndroidTargetArchitectures: 5
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: 
@@ -406,6 +406,7 @@ PlayerSettings:
   switchAllowsVideoCapturing: 1
   switchAllowsRuntimeAddOnContentInstall: 0
   switchDataLossConfirmation: 0
+  switchUserAccountLockEnabled: 0
   switchSupportedNpadStyles: 3
   switchSocketConfigEnabled: 0
   switchTcpInitialSendBufferSize: 32
@@ -548,7 +549,21 @@ PlayerSettings:
   webGLUseEmbeddedResources: 0
   webGLUseWasm: 0
   webGLCompressionFormat: 1
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: UNITY_POST_PROCESSING_STACK_V1
+    4: UNITY_POST_PROCESSING_STACK_V1
+    7: UNITY_POST_PROCESSING_STACK_V1
+    13: UNITY_POST_PROCESSING_STACK_V1
+    17: UNITY_POST_PROCESSING_STACK_V1
+    18: UNITY_POST_PROCESSING_STACK_V1
+    19: UNITY_POST_PROCESSING_STACK_V1
+    20: UNITY_POST_PROCESSING_STACK_V1
+    21: UNITY_POST_PROCESSING_STACK_V1
+    23: UNITY_POST_PROCESSING_STACK_V1
+    24: UNITY_POST_PROCESSING_STACK_V1
+    25: UNITY_POST_PROCESSING_STACK_V1
+    26: UNITY_POST_PROCESSING_STACK_V1
+    27: UNITY_POST_PROCESSING_STACK_V1
   platformArchitecture: {}
   scriptingBackend: {}
   incrementalIl2cppBuild: {}
@@ -624,6 +639,7 @@ PlayerSettings:
   XboxOneSplashScreen: {fileID: 0}
   XboxOneAllowedProductIds: []
   XboxOnePersistentLocalStorageSize: 0
+  XboxOneXTitleMemory: 8
   xboxOneScriptCompiler: 0
   vrEditorSettings:
     daydream:

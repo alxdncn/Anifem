@@ -34,6 +34,8 @@
 			#include "UnityCG.cginc"
 
 			//Declare the variables/properties
+			uniform float4 _UvColor;
+
 			uniform float _RedSaturation;
 			uniform float _GreenSaturation;
 			uniform float _BlueSaturation;
@@ -48,6 +50,24 @@
 
 			uniform float _SuperSaturationCheck;
 
+			uniform float _YellowBoost;
+
+			float3 rgb2hsv(float3 c) {
+              float4 K = float4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+              float4 p = lerp(float4(c.bg, K.wz), float4(c.gb, K.xy), step(c.b, c.g));
+              float4 q = lerp(float4(p.xyw, c.r), float4(c.r, p.yzx), step(p.x, c.r));
+              float d = q.x - min(q.w, q.y);
+              float e = 1.0e-10;
+              return float3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+            }
+
+            float3 hsv2rgb(float3 c) {
+              c = float3(c.x, clamp(c.yz, 0.0, 1.0));
+              float4 K = float4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+              float3 p = abs(frac(c.xxx + K.xyz) * 6.0 - K.www);
+              return c.z * lerp(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+            }
+
 
 			sampler2D _MainTex;
 
@@ -56,6 +76,8 @@
 				//Sample/store the screen (MainTex) pixel color
 				//We'll need this later when we re-saturate the scene
 				fixed4 col = tex2D(_MainTex, i.uv);
+				float3 hsvColor = rgb2hsv(col.rgb);
+				// return float4(hsvColor.rgb, 1); //This actually looks p good
 
 				//Set the desaturation value based on r, g, and b
 				//These colors are better than just averaging
@@ -75,29 +97,29 @@
 				//Secondly, there should be a way to math this
 				//Thirdly, I should make it more flexible
 
-//				fixed4 desaturatedColor = fixed4(redValue, greenValue, blueValue, 1); //* _UVDesaturationAmount;
-//				fixed4 bloomColor = fixed4(redValue, greenValue, blueValue, 1) * 2;//fixed4(redValue * _RedBloomAmount, greenValue * _GreenBloomAmount, blueValue * _BlueBloomAmount, 1);
-//
+				// fixed4 desaturatedColor = fixed4(redValue, greenValue, blueValue, 1); //* _UVDesaturationAmount;
+				// fixed4 bloomColor = fixed4(redValue, greenValue, blueValue, 1) * 2;//fixed4(redValue * _RedBloomAmount, greenValue * _GreenBloomAmount, blueValue * _BlueBloomAmount, 1);
+
 //				fixed4 newColor = smoothstep(desaturatedColor, bloomColor, 1);
 //
 //				return newColor;
-				if(col.r > _SuperSaturationCheck){// && col.g < _SuperSaturationCheck && col.b < _SuperSaturationCheck){
+
+				float3 checkHSVColor = rgb2hsv(_UvColor.rgb);
+
+				if(abs(hsvColor.x - checkHSVColor.x) < _SuperSaturationCheck && hsvColor.z < 0.95){
 
 					greenValue *= _GreenUVSaturation;
 					blueValue *= _BlueUVSaturation;
 					redValue *= _RedUVSaturation;
 
-				} else if(redValue > 0.1 && greenValue > 0.1 && blueValue > 0.1){
+				} else {//if(redValue > 0.1 && greenValue > 0.1 && blueValue > 0.1){
 					
-
-					float tempRed = redValue;
-					float tempGreen = greenValue;
-					float tempBlue = blueValue;
-					float tempYellow = (redValue + greenValue) / 2;
+					//It's very hard to get yellow in there, so add it in
+					float tempYellow = ((redValue + greenValue) / 2) * _YellowBoost;
 					
-					greenValue = (1 - tempYellow) * _GreenNonUVSaturation;
-					blueValue = (tempBlue) * _BlueNonUVSaturation;
-					redValue = (1 - tempYellow) * _RedNonUVSaturation;
+					greenValue *= _GreenNonUVSaturation + tempYellow;
+					blueValue *= _BlueNonUVSaturation;
+					redValue *= _RedNonUVSaturation + tempYellow;
 		
 				}
 
