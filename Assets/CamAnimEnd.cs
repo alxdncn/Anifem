@@ -16,5 +16,6 @@ public class CamAnimEnd : MonoBehaviour {
 
 	public void TurnOffCam(){
 		this.gameObject.SetActive(false);
+		ViewSwitcher.Instance.StartBeeAnim();
 	}
 }

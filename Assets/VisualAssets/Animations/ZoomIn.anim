@@ -18,7 +18,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 1.5
-        value: {x: 0, y: 9, z: 0}
+        value: {x: 0, y: -4.16, z: 0}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -32,13 +32,13 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 1.5
-        value: {x: 679.92, y: 298.91, z: 569.81}
+        value: {x: 687.99, y: 298.91, z: 569.81}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
       - serializedVersion: 2
         time: 2.8333333
-        value: {x: 686.1, y: 301.5, z: 598.5}
+        value: {x: 686.7, y: 301.5, z: 598.5}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -58,13 +58,13 @@ AnimationClip:
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
-        time: 2.6666667
+        time: 2.5
         value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
-        time: 2.75
+        time: 2.7
         value: 1
         inSlope: 0
         outSlope: 0
@@ -272,13 +272,13 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 1.5
-        value: 679.92
+        value: 687.99
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
         time: 2.8333333
-        value: 686.1
+        value: 686.7
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -354,7 +354,7 @@ AnimationClip:
       m_Curve:
       - serializedVersion: 2
         time: 1.5
-        value: 9
+        value: -4.16
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -391,13 +391,13 @@ AnimationClip:
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
-        time: 2.6666667
+        time: 2.5
         value: 0
         inSlope: 0
         outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
-        time: 2.75
+        time: 2.7
         value: 1
         inSlope: 0
         outSlope: 0

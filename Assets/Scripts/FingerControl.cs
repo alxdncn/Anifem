@@ -5,12 +5,11 @@ using UnityEngine;
 public class FingerControl : MonoBehaviour {
 
 	enum State{
-		ONE,
-		TWO,
-		THREE
+		PROFILE,
+		TOP
 	}
 
-	State currentState = State.ONE;
+	State currentState = State.PROFILE;
 
 	delegate void StateUpdate();
 	StateUpdate stateUpdate;
@@ -19,20 +18,25 @@ public class FingerControl : MonoBehaviour {
 		currentState = newState;
 
 		switch(newState){
-			case State.ONE:
+			case State.PROFILE:
 				InitStateOne();
 				stateUpdate = StateOneUpdate;
 				break;
-			case State.TWO:
-				InitStateTwo();
-				stateUpdate = StateTwoUpdate;
-				break;
-			case State.THREE:
-				InitStateThree();
-				stateUpdate = StateThreeUpdate;
+			case State.TOP:
+				InitStateFront();
+				stateUpdate = FrontUpdate;
 				break;
 		}
 	}
+
+	enum ProfilePositions{
+		ONE,
+		TWO,
+		THREE
+	}
+
+	ProfilePositions currentProfilePosition = ProfilePositions.ONE;
+	ProfilePositions currentTopPosition = ProfilePositions.ONE;
 
 	[SerializeField] float forwardSpeed = 5f;
 	[SerializeField] float angleJump = 15f;
@@ -41,17 +45,27 @@ public class FingerControl : MonoBehaviour {
 
 	[SerializeField] GameObject sweetSpot;
 
-	[SerializeField] Camera cam;
+	[Header("Profile Mode")]
+	[SerializeField] Camera profileCam;
 
 	[SerializeField] float[] xThresholds;
 	[SerializeField] float[] camSizes;
 	[SerializeField] Vector3[] camPositions;
 
+	[Header("Top Mode")]
+	[SerializeField] Camera topCam;
+	[SerializeField] float moveAmount = 0.2f;
+	[SerializeField] float[] topXThresholds;
+	[SerializeField] float[] topCamSizes;
+	[SerializeField] Vector3[] topCamPositions;
+	[SerializeField] Vector3[] topCamRotations;
+
+
 	bool canMove = true;
 
 	// Use this for initialization
 	void Start () {
-		SetState(State.ONE);
+		SetState(State.PROFILE);
 	}
 	
 	// Update is called once per frame
@@ -61,51 +75,62 @@ public class FingerControl : MonoBehaviour {
 		}
 	}
 
-	#region ONE
+	#region PROFILE
 	void InitStateOne(){
-		SetCamPos(currentState);
+		topCam.enabled = false;
+		profileCam.enabled = true;
+		SetCamPos(currentProfilePosition, profileCam, camSizes, camPositions);
 	}
 
 	void StateOneUpdate(){
-		Move();
+		MoveForward();
+		MoveUpAndDown();
 
-		if(transform.position.x < xThresholds[(int)currentState]){
-			SetState(State.TWO);
+		if(transform.position.x < xThresholds[(int)currentProfilePosition]){
+			currentProfilePosition++;
+			SetState(State.TOP);
 		}
 	}
 
 	#endregion
 
-	#region TWO
-	void InitStateTwo(){
-		SetCamPos(currentState);
+	#region FRONT
+	void InitStateFront(){
+		topCam.enabled = true;
+		profileCam.enabled = false;
+		SetCamPos(currentTopPosition, topCam, topCamSizes, topCamPositions, topCamRotations);
 	}
 
-	void StateTwoUpdate(){
-		Move();
+	void FrontUpdate(){
+		// frontCam.orthographicSize = Mathf.Lerp(endCamSize, startCamSize, Mathf.Clamp01((fingerEndXPosition - transform.position.x)/fingerStartDistance));
 
-		if(transform.position.x < xThresholds[(int)currentState]){
-			SetState(State.THREE);
+		MoveForward();
+		MoveSideWays();
+
+		if((int)currentTopPosition < topXThresholds.Length && transform.position.x < topXThresholds[(int)currentTopPosition]){
+			currentTopPosition++;
+			SetState(State.PROFILE);
 		}
 	}
 
-	#endregion
-
-	#region THREE
-	void InitStateThree(){
-		SetCamPos(currentState);
-	}
-
-	void StateThreeUpdate(){
-		Move();
-	}
-
-	#endregion
-
-	void Move(){
+	void MoveSideWays(){
 		if(!canMove)
 			return;
-		transform.position += transform.right * -forwardSpeed * Time.deltaTime;
+			
+		if(Input.GetKeyDown(KeyCode.LeftArrow)){
+			transform.position -= new Vector3(0, 0, moveAmount);
+		} else if(Input.GetKeyDown(KeyCode.RightArrow)){
+			transform.position += new Vector3(0, 0, moveAmount);
+		}
+	}
+	#endregion
+
+	void MoveUpAndDown(){
+		if(Input.GetKeyDown(KeyCode.Space)){
+			SetState(State.TOP);
+		}
+		if(!canMove)
+			return;
 		if(Input.GetKeyDown(KeyCode.UpArrow)){
 			transform.Rotate(0, 0, angleJump);
 			if(transform.eulerAngles.z > maxZAngle && transform.eulerAngles.z < 180){
@@ -119,13 +144,25 @@ public class FingerControl : MonoBehaviour {
 		}
 	}
 
-	void SetCamPos(State state){
-		int stateAsInt = (int)state;
-		cam.orthographicSize = camSizes[stateAsInt];
-		cam.transform.position = camPositions[stateAsInt];
+	void MoveForward(){
+		if(canMove)
+			transform.position += transform.right * -forwardSpeed * Time.deltaTime;
+
+		if(Input.GetKeyDown(KeyCode.Space)){
+			ViewSwitcher.Instance.SwitchToBeeView();
+		}
 	}
 
-	void OnTriggerEnter2D(Collider2D col){
+	void SetCamPos(ProfilePositions position, Camera cam, float[] sizes, Vector3[] positions, Vector3[] rotations = null){
+		int stateAsInt = (int)position;
+		cam.orthographicSize = sizes[stateAsInt];
+		cam.transform.position = positions[stateAsInt];
+		if(rotations != null){
+			cam.transform.eulerAngles = rotations[stateAsInt];
+		}
+	}
+
+	void OnTriggerEnter(Collider col){
 		canMove = false;
 		if(col.gameObject == sweetSpot)
 			Debug.Log("You Win!");
