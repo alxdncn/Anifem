@@ -57,12 +57,12 @@ AnimationClip:
       - serializedVersion: 2
         time: 5.05
         value: {x: -2.8, y: -17.3, z: 6.6}
-        inSlope: {x: -1.5000049, y: -11.899998, z: -58.10001}
-        outSlope: {x: -1.5000049, y: -11.899998, z: -58.10001}
+        inSlope: {x: 0, y: -11.899998, z: -59.19998}
+        outSlope: {x: 0, y: -11.899998, z: -59.19998}
         tangentMode: 0
       - serializedVersion: 2
         time: 6
-        value: {x: -4.3, y: -29.2, z: -51.5}
+        value: {x: -0.2, y: -29.2, z: -52.6}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -100,7 +100,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 6.5
+    m_StopTime: 6.8333335
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
@@ -134,12 +134,12 @@ AnimationClip:
       - serializedVersion: 2
         time: 5.05
         value: -2.8
-        inSlope: -1.5000049
-        outSlope: -1.5000049
+        inSlope: 0
+        outSlope: 0
         tangentMode: 136
       - serializedVersion: 2
         time: 6
-        value: -4.3
+        value: -0.2
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -202,12 +202,12 @@ AnimationClip:
       - serializedVersion: 2
         time: 5.05
         value: 6.6
-        inSlope: -58.10001
-        outSlope: -58.10001
+        inSlope: -59.19998
+        outSlope: -59.19998
         tangentMode: 136
       - serializedVersion: 2
         time: 6
-        value: -51.5
+        value: -52.6
         inSlope: 0
         outSlope: 0
         tangentMode: 136
@@ -337,7 +337,7 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_GenerateMotionCurves: 0
   m_Events:
-  - time: 6.5
+  - time: 6.8333335
     functionName: EndBeeFlyin
     data: 
     objectReferenceParameter: {fileID: 0}

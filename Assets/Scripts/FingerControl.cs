@@ -23,8 +23,8 @@ public class FingerControl : MonoBehaviour {
 				stateUpdate = StateOneUpdate;
 				break;
 			case State.TOP:
-				InitStateFront();
-				stateUpdate = FrontUpdate;
+				InitStateTop();
+				stateUpdate = TopUpdate;
 				break;
 		}
 	}
@@ -39,11 +39,14 @@ public class FingerControl : MonoBehaviour {
 	ProfilePositions currentTopPosition = ProfilePositions.ONE;
 
 	[SerializeField] float forwardSpeed = 5f;
-	[SerializeField] float angleJump = 15f;
 	[SerializeField] float maxZAngle = 45f;
 	[SerializeField] float minZAngle = 315f;
 
+	[Header("Collision Stuff")]
+	[SerializeField] Transform contactPoint;
 	[SerializeField] GameObject sweetSpot;
+	[SerializeField] float maxDistFromSpot = 1.0f;
+	[SerializeField] float maxPoints = 100f;
 
 	[Header("Profile Mode")]
 	[SerializeField] Camera profileCam;
@@ -51,15 +54,15 @@ public class FingerControl : MonoBehaviour {
 	[SerializeField] float[] xThresholds;
 	[SerializeField] float[] camSizes;
 	[SerializeField] Vector3[] camPositions;
+	[SerializeField] float angleMoveSpeed = 1f;
 
 	[Header("Top Mode")]
 	[SerializeField] Camera topCam;
-	[SerializeField] float moveAmount = 0.2f;
 	[SerializeField] float[] topXThresholds;
 	[SerializeField] float[] topCamSizes;
 	[SerializeField] Vector3[] topCamPositions;
 	[SerializeField] Vector3[] topCamRotations;
-
+	[SerializeField] float positionMoveSpeed = 0.1f;
 
 	bool canMove = true;
 
@@ -92,16 +95,31 @@ public class FingerControl : MonoBehaviour {
 		}
 	}
 
+	void MoveUpAndDown(){
+		if(!canMove)
+			return;
+
+		float mouseChange = Input.GetAxis("Mouse Y");
+
+		transform.Rotate(0, 0, mouseChange * angleMoveSpeed);
+
+		if(transform.eulerAngles.z > maxZAngle && transform.eulerAngles.z < 180){
+			transform.eulerAngles = new Vector3(0, 0, maxZAngle);
+		}
+		if(transform.eulerAngles.z < minZAngle && transform.eulerAngles.z > 180){
+			transform.eulerAngles = new Vector3(0, 0, minZAngle);
+		}
+	}
 	#endregion
 
-	#region FRONT
-	void InitStateFront(){
+	#region TOP
+	void InitStateTop(){
 		topCam.enabled = true;
 		profileCam.enabled = false;
 		SetCamPos(currentTopPosition, topCam, topCamSizes, topCamPositions, topCamRotations);
 	}
 
-	void FrontUpdate(){
+	void TopUpdate(){
 		// frontCam.orthographicSize = Mathf.Lerp(endCamSize, startCamSize, Mathf.Clamp01((fingerEndXPosition - transform.position.x)/fingerStartDistance));
 
 		MoveForward();
@@ -116,33 +134,12 @@ public class FingerControl : MonoBehaviour {
 	void MoveSideWays(){
 		if(!canMove)
 			return;
-			
-		if(Input.GetKeyDown(KeyCode.LeftArrow)){
-			transform.position -= new Vector3(0, 0, moveAmount);
-		} else if(Input.GetKeyDown(KeyCode.RightArrow)){
-			transform.position += new Vector3(0, 0, moveAmount);
-		}
+
+		float mouseChange = Input.GetAxis("Mouse X");
+
+		transform.position += new Vector3(0, 0, mouseChange * positionMoveSpeed);
 	}
 	#endregion
-
-	void MoveUpAndDown(){
-		if(Input.GetKeyDown(KeyCode.Space)){
-			SetState(State.TOP);
-		}
-		if(!canMove)
-			return;
-		if(Input.GetKeyDown(KeyCode.UpArrow)){
-			transform.Rotate(0, 0, angleJump);
-			if(transform.eulerAngles.z > maxZAngle && transform.eulerAngles.z < 180){
-				transform.eulerAngles = new Vector3(0, 0, maxZAngle);
-			}
-		} else if(Input.GetKeyDown(KeyCode.DownArrow)){
-			transform.Rotate(0, 0, -angleJump);
-			if(transform.eulerAngles.z < minZAngle && transform.eulerAngles.z > 180){
-				transform.eulerAngles = new Vector3(0, 0, minZAngle);
-			}
-		}
-	}
 
 	void MoveForward(){
 		if(canMove)
@@ -163,10 +160,17 @@ public class FingerControl : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider col){
+		if(!canMove)
+			return;
+			
 		canMove = false;
-		if(col.gameObject == sweetSpot)
-			Debug.Log("You Win!");
-		else
-			Debug.Log("You Lose!");
+
+		float distFromSpot = Vector3.Distance(contactPoint.position, sweetSpot.transform.position);
+
+		//.35 should be pretty good
+		//.57 should be pretty bad
+		//.84 should be very bad
+		float points = Mathf.Lerp(maxPoints, 0, Mathf.Clamp01(distFromSpot/maxDistFromSpot));
+		Debug.Log("Points: " + points);
 	}
 }
