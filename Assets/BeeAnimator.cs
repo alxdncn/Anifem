@@ -17,4 +17,9 @@ public class BeeAnimator : MonoBehaviour {
 	public void EndBeeFlyin(){
 		ViewSwitcher.Instance.SwitchToFingerView();
 	}
+
+	public void EndBeeRub(){
+		GetComponent<Animator>().speed = 1f;
+		ViewSwitcher.Instance.SwitchToFingerRub();
+	}
 }

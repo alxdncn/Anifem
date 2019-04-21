@@ -64,11 +64,17 @@ public class FingerControl : MonoBehaviour {
 	[SerializeField] Vector3[] topCamRotations;
 	[SerializeField] float positionMoveSpeed = 0.1f;
 
+
+	Vector3 startPos;
+	Quaternion startRot;
+
 	bool canMove = true;
 
 	// Use this for initialization
 	void Start () {
 		SetState(State.PROFILE);
+		startPos = transform.position;
+		startRot = transform.rotation;
 	}
 	
 	// Update is called once per frame
@@ -146,7 +152,7 @@ public class FingerControl : MonoBehaviour {
 			transform.position += transform.right * -forwardSpeed * Time.deltaTime;
 
 		if(Input.GetKeyDown(KeyCode.Space)){
-			ViewSwitcher.Instance.SwitchToBeeView();
+			ViewSwitcher.Instance.SwitchToBeeView(true);
 		}
 	}
 
@@ -157,6 +163,19 @@ public class FingerControl : MonoBehaviour {
 		if(rotations != null){
 			cam.transform.eulerAngles = rotations[stateAsInt];
 		}
+	}
+	
+	void Reset(){
+		transform.position = startPos;
+		transform.rotation = startRot;
+
+		currentTopPosition = 0;
+		currentProfilePosition = 0;
+
+		canMove = true;
+
+		SetState(State.PROFILE);
+		ViewSwitcher.Instance.SwitchToBeeView(false);
 	}
 
 	void OnTriggerEnter(Collider col){
@@ -170,7 +189,20 @@ public class FingerControl : MonoBehaviour {
 		//.35 should be pretty good
 		//.57 should be pretty bad
 		//.84 should be very bad
-		float points = Mathf.Lerp(maxPoints, 0, Mathf.Clamp01(distFromSpot/maxDistFromSpot));
-		Debug.Log("Points: " + points);
+
+		float fraction = Mathf.Clamp01(distFromSpot/maxDistFromSpot);
+		Debug.Log(fraction);
+
+		if(fraction < .35f){
+			Debug.Log("gg");
+			ViewSwitcher.Instance.SwitchToRubView();
+		} else if(fraction < .57f){
+			Debug.Log("Good enough I guess?");
+			ViewSwitcher.Instance.SwitchToRubView();
+		} else{
+			Debug.Log("Nobody enjoyed that.");
+			Reset();
+
+		}
 	}
 }
