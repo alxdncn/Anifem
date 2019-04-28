@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657826, g: 0.49641263, b: 0.57481676, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -833,7 +833,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &696947653
 Transform:
   m_ObjectHideFlags: 0
@@ -864,10 +864,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9728ce00f18364da2bdc9b8170396d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blurAmount: 10
-  rows: 8
-  columns: 8
-  eyeSize: 0.123
+  colsAndRows: {x: 0, y: 0}
+  eyeBarrel: 0.1
   barrelPower: 1.15
 --- !u!114 &696947655
 MonoBehaviour:
@@ -892,6 +890,8 @@ MonoBehaviour:
   blueNonUVSaturation: 1
   uvSuperSaturationChecker: 0.7
   generalDesaturation: 0.5
+  yellowBoost: 0.2
+  uvCheckColor: {r: 1, g: 0, b: 1, a: 1}
 --- !u!114 &696947656
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2364,7 +2364,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2083234281
 Transform:
   m_ObjectHideFlags: 0

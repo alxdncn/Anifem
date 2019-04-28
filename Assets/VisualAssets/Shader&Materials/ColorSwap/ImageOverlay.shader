@@ -13,9 +13,9 @@ Shader "Shader Forge/ImageOverlay" {
         _Metallic ("Metallic", Range(0, 1)) = 0
         _Gloss ("Gloss", Range(0, 1)) = 0.8
 		_ReplacementTexture("Replacement Texture", 2D) = "white" {}
+        _ReplaceColor("Replacement Color", Color) = (1, 1, 1, 1)
         _TextureTint("Texture Tint Color", Color) = (1, 1, 1, 1)
-        _MainColorThreshold("Main Color Threshold", Range(0,1)) = 0.5
-        _SecondaryThreshold("Secondary Threshold", Range(0,1)) = 0.5
+        _ReplaceThreshold("Main Color Threshold", Range(0,1)) = 0.5
         _TextureSize("Texture Size", Float) = 1
     }
     SubShader {
@@ -447,8 +447,8 @@ Shader "Shader Forge/ImageOverlay" {
 
 			sampler2D _BaseColor;
 			sampler2D _ReplacementTexture;
-            float _MainColorThreshold;
-            float _SecondaryThreshold;
+            float4 _ReplaceColor;
+            float _ReplaceThreshold;
             float4 _TextureTint;
             float _TextureSize;
 			
@@ -459,6 +459,7 @@ Shader "Shader Forge/ImageOverlay" {
                 float4 vert = UnityObjectToClipPos (v.vertex);
 				o.grabPos = ComputeGrabScreenPos(o.vertex);
 				o.screenPos = ComputeScreenPos(vert);
+                o.uv = v.uv;
 				UNITY_TRANSFER_FOG(o,o.vertex);
 				return o;
 			}
@@ -467,12 +468,15 @@ Shader "Shader Forge/ImageOverlay" {
 			{
 				// sample the texture
 				fixed4 col = tex2Dproj(_BaseColor, i.grabPos);
-				fixed2 screenPos = (i.screenPos.xy * i.screenPos.z) * _TextureSize;
+				fixed2 screenPos = (i.screenPos.xy / i.screenPos.z) * _TextureSize;
                 // fixed2 screenPos = (i.screenPos.xy) * _TextureSize;
-                return fixed4(i.screenPos.z, 0, 0, 0);
+                // return fixed4(i.uv.x, i.uv.y, 0, 0);
 
-				if(col.g > _MainColorThreshold && col.b < _SecondaryThreshold && col.r < _SecondaryThreshold){
-					fixed4 colTwo = tex2D(_ReplacementTexture, screenPos) * _TextureTint;
+                float colDifference = distance(col.xyz, _ReplaceColor.xyz);
+
+				if(colDifference < _ReplaceThreshold){
+                    fixed4 colTwo = tex2D(_ReplacementTexture, screenPos) * _TextureTint;
+					// fixed4 colTwo = tex2D(_ReplacementTexture, screenPos) * _TextureTint;
 					col = lerp(col, colTwo, colTwo.a);
 				}
 				// apply fog
