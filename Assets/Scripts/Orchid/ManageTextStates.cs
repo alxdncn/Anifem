@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class ManageTextStates : MonoBehaviour {
 	//Need to make it a singleton!
+	private static ManageTextStates instance;
+	public static ManageTextStates Instance{ get {
+		if(instance == null){
+			instance = (ManageTextStates)Object.FindObjectOfType<ManageTextStates>();
+		}
+		return instance; }
+	}
 
 	GameObject activeHolder;
 
@@ -31,12 +38,12 @@ public class ManageTextStates : MonoBehaviour {
 		
 	}
 
-	public void FinishedTextHolder(){ //This should maybe be an event listener that TextUnscrolling.cs fires?
-		GameObject holder = activeHolder.GetComponent<TextUnscrolling>().nextHolder;
-		activeHolder.SetActive(false);
-		holder.SetActive(true);
-		activeHolder = holder;
-	}
+	// public void FinishedTextHolder(){ //This should maybe be an event listener that TextUnscrolling.cs fires?
+	// 	GameObject holder = activeHolder.GetComponent<TextUnscrolling>().nextHolder;
+	// 	activeHolder.SetActive(false);
+	// 	holder.SetActive(true);
+	// 	activeHolder = holder;
+	// }
 
 	public void SetTextHolderActive(GameObject holder){
 		activeHolder.SetActive(false);

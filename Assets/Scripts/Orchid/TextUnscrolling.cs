@@ -57,6 +57,10 @@ public class TextUnscrolling : MonoBehaviour {
 	}
 	#endregion
 
+	[SerializeField] GameObject nextTextHolder;
+
+	bool firstStart = true;
+
 	[SerializeField] bool debug = false;
 
 	public GameObject nextHolder;
@@ -65,6 +69,7 @@ public class TextUnscrolling : MonoBehaviour {
 
 	string initialText;
 	List<Text> textComponents;
+	List<string> storeTexts;
 	int currentTextComponent = 0;
 
 	[SerializeField] float normalTextCharsPerSecond = 1.0f;
@@ -86,13 +91,15 @@ public class TextUnscrolling : MonoBehaviour {
 	float t;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		textComponents = new List<Text>();
+		storeTexts = new List<string>();
 
 		for(int i = 0; i < transform.childCount; i++){
 			Text getText = transform.GetChild(i).GetComponent<Text>();
 			if(getText != null){
 				textComponents.Add(getText);
+				storeTexts.Add(getText.text);
 			}
 		}
 
@@ -114,7 +121,38 @@ public class TextUnscrolling : MonoBehaviour {
 
 		SetState(State.NormalScrolling);
 	}
-	
+
+	void OnEnable(){
+		if(firstStart){
+			firstStart = false;
+			return;
+		}
+		ResetText();
+	}
+
+	void OnDisable(){
+		overButton = false;
+	}
+
+	void ResetText(){
+		initialText = storeTexts[0];
+		textComponents[0].text = "";
+		textComponents[0].enabled = true;
+
+		for(int i = 1; i < textComponents.Count; i++){
+			textComponents[i].enabled = false;
+		}
+
+		for(int i = 0; i < buttons.Length; i++){
+			buttons[i].gameObject.SetActive(false);
+		}
+
+		buttonIndex = 0;
+		currentTextComponent = 0;
+
+		SetState(State.NormalScrolling);
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if(stateUpdate != null){
@@ -138,8 +176,15 @@ public class TextUnscrolling : MonoBehaviour {
 	}
 
 	void GoToNextBlock(){
+
 		textComponents[currentTextComponent].enabled = false;
 		currentTextComponent++;
+
+		if(currentTextComponent >= textComponents.Count){
+			ManageTextStates.Instance.SetTextHolderActive(nextTextHolder);
+			return;
+		}
+
 		initialText = textComponents[currentTextComponent].text;
 		textComponents[currentTextComponent].text = "";
 		textComponents[currentTextComponent].enabled = true;
@@ -148,8 +193,12 @@ public class TextUnscrolling : MonoBehaviour {
 
 	#region NormalScrolling
 	void InitNormalScrolling(){
-		if(lastState != State.FadingButton)
+		if(lastState != State.FadingButton){
 			characterIndex = 0; //only reset the character index if we weren't just fading in a button
+			for(int i = 0; i < buttons.Length; i++){
+				buttons[i].gameObject.SetActive(false);
+			}
+		}
 
 		textRevealSpeed = normalTextCharsPerSecond;
 		timeSinceLastCharReveal = 1.0f / textRevealSpeed; //make it show the first letter right away
@@ -246,10 +295,6 @@ public class TextUnscrolling : MonoBehaviour {
 
 	public void ExitButton(){
 		overButton = false;
-	}
-
-	public void JumpToText(GameObject textHolderToActivate){
-
 	}
 	#endregion
 	
