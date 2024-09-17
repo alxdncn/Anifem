@@ -1,13 +1,8 @@
 fileFormatVersion: 2
 guid: a131ea51b98ef45739f445084048639b
-timeCreated: 1548124042
-licenseType: Pro
 VideoClipImporter:
   externalObjects: {}
   serializedVersion: 2
-  useLegacyImporter: 0
-  quality: 0.5
-  isColorLinear: 0
   frameRange: 0
   startFrame: -1
   endFrame: -1

@@ -411,27 +411,27 @@ namespace ShaderForge {
 
 			if( Event.current.type == EventType.DragPerform ) {
 				Object droppedObj = DragAndDrop.objectReferences[0];
-				if( droppedObj is Texture2D || droppedObj is ProceduralTexture || droppedObj is RenderTexture ) {
+				if( droppedObj is Texture2D || droppedObj is Texture || droppedObj is RenderTexture ) {
 					SFN_Tex2d texNode = editor.nodeBrowser.OnStopDrag() as SFN_Tex2d;
 					texNode.TextureAsset = droppedObj as Texture;
 					texNode.OnAssignedTexture();
 					Event.current.Use();
 				}
-				if(droppedObj is ProceduralMaterial){
-					OnDroppedSubstance(droppedObj as ProceduralMaterial);
+				if(droppedObj is Material){
+					OnDroppedSubstance(droppedObj as Material);
 				}
 			}
 
 			if( Event.current.type == EventType.DragUpdated && Event.current.type != EventType.DragPerform ) {
 				if( DragAndDrop.objectReferences.Length > 0 ) {
 					Object dragObj = DragAndDrop.objectReferences[0];
-					if( dragObj is Texture2D || dragObj is ProceduralTexture || dragObj is RenderTexture  ) {
+					if( dragObj is Texture2D || dragObj is Texture || dragObj is RenderTexture  ) {
 						DragAndDrop.visualMode = DragAndDropVisualMode.Link;
 						if( !editor.nodeBrowser.IsPlacing() )
 							editor.nodeBrowser.OnStartDrag( editor.GetTemplate<SFN_Tex2d>() );
 						else
 							editor.nodeBrowser.UpdateDrag();
-					} else if(dragObj is ProceduralMaterial){
+					} else if(dragObj is Material){
 						DragAndDrop.visualMode = DragAndDropVisualMode.Link;
 					} else {
 						DragAndDrop.visualMode = DragAndDropVisualMode.Rejected;
@@ -492,8 +492,7 @@ namespace ShaderForge {
 		}
 
 
-		public void OnDroppedSubstance(ProceduralMaterial procMat){
-
+		public void OnDroppedSubstance(Material procMat){
 			Texture diffuse = TryGetProceduralTexture(procMat, "_MainTex");
 			Texture normal = TryGetProceduralTexture(procMat, "_BumpMap");
 			//Texture parallax = TryGetProceduralTexture(procMat, "_ParallaxMap");
@@ -528,7 +527,7 @@ namespace ShaderForge {
 			return null;
 		}
 
-		public Texture TryGetProceduralTexture(ProceduralMaterial procMat, string propName){
+		public Texture TryGetProceduralTexture(Material procMat, string propName){
 			Texture returnTex = null;
 			try{
 				if(procMat.HasProperty(propName))
